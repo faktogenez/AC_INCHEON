@@ -27,6 +27,13 @@ function parseProductSpecs(string $text, string $lang): array {
             $condition = 'new';
         }
 
+        if (preg_match('/^\s*(Новые модели|새\\s*모델|신제품)\s*$/iu', $line)) {
+            continue;
+        }
+        if (preg_match('/^\s*(Б\\/У|БУ|중고)\s*$/iu', $line)) {
+            continue;
+        }
+
         if (preg_match('/^Цена\\s*:\\s*/iu', $line)) {
             continue;
         }
