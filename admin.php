@@ -233,6 +233,20 @@ function typeOptions(): array {
     ];
 }
 
+// Удалить все товары
+if (isset($_GET['delete_all'])) {
+    $imgs = $pdo->query("SELECT image FROM products WHERE image IS NOT NULL AND image != ''")->fetchAll(PDO::FETCH_COLUMN);
+    foreach ($imgs as $img) {
+        if ($img) {
+            if (file_exists('uploads/' . $img)) unlink('uploads/' . $img);
+            if (file_exists('thumbnails/' . $img)) unlink('thumbnails/' . $img);
+        }
+    }
+    $pdo->exec("DELETE FROM products");
+    header('Location: admin.php');
+    exit;
+}
+
 // Обработка добавления/редактирования товара
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['add_product']) || isset($_POST['update_product']))) {
     $isUpdate = isset($_POST['update_product']);
@@ -488,7 +502,8 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
         .admin-actions a { text-decoration: none; }
         .admin-item { background: color-mix(in srgb, var(--surface) 82%, transparent); border: 1px solid var(--border); padding: 12px; margin: 10px 0; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
         .admin-item .admin-links { display: flex; gap: 12px; align-items: center; }
-        .admin-item .admin-link { text-decoration: none; font-weight: 850; }
+        .admin-item .admin-link { text-decoration: none; font-weight: 850; font-size: 1.1rem; line-height: 1; padding: 8px; border-radius: 10px; }
+        .admin-item .admin-link:hover { background: color-mix(in srgb, var(--surface-2) 60%, transparent); }
         .admin-item .admin-link-delete { color: color-mix(in srgb, #ef4444 85%, var(--text)); }
         .error { color: color-mix(in srgb, #ef4444 85%, var(--text)); background: color-mix(in srgb, #ef4444 12%, var(--surface)); border: 1px solid color-mix(in srgb, #ef4444 18%, var(--border)); padding: 10px; border-radius: 12px; margin: 10px 0; }
         .success { color: color-mix(in srgb, #22c55e 85%, var(--text)); background: color-mix(in srgb, #22c55e 10%, var(--surface)); border: 1px solid color-mix(in srgb, #22c55e 18%, var(--border)); padding: 10px; border-radius: 12px; margin: 10px 0; }
@@ -498,6 +513,8 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
 <div class="admin-container">
     <div class="admin-actions">
         <a class="btn btn-ghost" href="index.php?lang=ru"><?php echo t('home'); ?></a>
+        <a class="btn btn-ghost" href="?delete_all=1" onclick="return confirm('Удалить ВСЕ товары?')"
+           aria-label="Удалить все" title="Удалить все">🗑️</a>
         <a class="btn btn-ghost" href="logout.php"><?php echo t('logout'); ?></a>
     </div>
     
@@ -582,8 +599,8 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
             <span><strong><?php echo htmlspecialchars($prod['name_ru']); ?></strong> / <?php echo htmlspecialchars($prod['name_ko']); ?><br>
             <?php echo htmlspecialchars(formatPrice((string)$prod['price'])); ?> 원</span>
             <div class="admin-links">
-                <a class="admin-link" href="?edit=<?php echo $prod['id']; ?>">✏️ <?php echo t('edit'); ?></a>
-                <a class="admin-link admin-link-delete" href="?delete=<?php echo $prod['id']; ?>" onclick="return confirm('Удалить?')">🗑️ <?php echo t('delete'); ?></a>
+                <a class="admin-link" href="?edit=<?php echo $prod['id']; ?>" aria-label="Редактировать" title="Редактировать">✏️</a>
+                <a class="admin-link admin-link-delete" href="?delete=<?php echo $prod['id']; ?>" onclick="return confirm('Удалить?')" aria-label="Удалить" title="Удалить">🗑️</a>
             </div>
         </div>
     <?php endforeach; ?>
