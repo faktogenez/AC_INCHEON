@@ -1,893 +1,600 @@
-/* -------------------------------
-   БАЗОВЫЕ ПЕРЕМЕННЫЕ И НАСТРОЙКИ
------------------------------------ */
 :root {
-    --bg-light: #ffffff;
-    --bg-soft: #f8fafc;
-    --text-dark: #0f172a;
-    --text-muted: #475569;
-    --accent-blue: #2563eb;
-    --accent-blue-hover: #1e40af;
-    --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
-    --card-hover-shadow: 0 25px 30px -10px rgba(0, 0, 0, 0.1);
-    --transition-default: all 0.3s ease;
-    --section-spacing: 100px;
-    --section-spacing-mobile: 60px;
+  --bg: #f6f8fb;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --text: #0b1220;
+  --text-muted: #475569;
+  --border: rgba(15, 23, 42, 0.12);
+  --accent: #2563eb;
+  --accent-strong: #1e40af;
+  --shadow: 0 18px 45px rgba(2, 6, 23, 0.08);
+  --shadow-hover: 0 22px 60px rgba(2, 6, 23, 0.12);
+  --radius: 22px;
+  --radius-sm: 16px;
+  --container: 1200px;
+  --section-space: clamp(44px, 6vw, 92px);
+  --section-space-mobile: clamp(28px, 5vw, 40px);
+  --focus: #38bdf8;
+  --transition-fast: 180ms ease;
+  --transition: 260ms ease;
+  --bg-light: var(--surface);
+  --bg-soft: var(--surface-2);
+  --text-dark: var(--text);
+  --accent-blue: var(--accent);
+  --accent-blue-hover: var(--accent-strong);
+  --card-shadow: var(--shadow);
+  --card-hover-shadow: var(--shadow-hover);
+  --transition-default: all var(--transition);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #070b13;
+    --surface: #0b1220;
+    --surface-2: #111a2b;
+    --text: #e5e7eb;
+    --text-muted: #a6b0c3;
+    --border: rgba(226, 232, 240, 0.16);
+    --shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+    --shadow-hover: 0 22px 60px rgba(0, 0, 0, 0.65);
+    --focus: #7dd3fc;
+  }
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light dark;
 }
 
 body {
-    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg-light);
-    color: var(--text-dark);
-    line-height: 1.6;
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  padding: 10px 14px;
+  border-radius: 9999px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  transform: translateY(-200%);
+  transition: transform var(--transition-fast);
+  z-index: 100;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
 }
 
 .container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 24px;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
-/* -------------------------------
-   ГЛОБАЛЬНЫЕ СТИЛИ ДЛЯ ЗАГОЛОВКОВ
------------------------------------ */
-h1, h2, h3, .section-title {
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    margin-bottom: 1rem;
-    color: var(--text-dark);
+h1, h2, h3 {
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0;
+  color: var(--text);
 }
 
 .section-title {
-    font-size: clamp(2rem, 5vw, 2.5rem);
-    text-align: center;
-    margin-bottom: 3rem;
+  font-size: clamp(1.6rem, 4vw, 2.25rem);
+  text-align: center;
+  text-wrap: balance;
 }
 
-/* -------------------------------
-   СТИЛИ ШАПКИ (HEADER)
------------------------------------ */
 header {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid #e2e8f0;
-    position: sticky;
-    top: 0;
-    z-index: 20;
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
 .header-inner {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 0;
-    gap: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  gap: 12px;
 }
 
 .logo h1 {
-    font-size: 1.5rem;
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    margin-bottom: 0;
+  font-size: 1.2rem;
+  background: linear-gradient(135deg, var(--text), color-mix(in srgb, var(--accent) 30%, var(--text)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .header-controls {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.contact-info {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.header-phone {
-    font-weight: 600;
-    color: var(--text-dark);
-    text-decoration: none;
-    font-size: 1.1rem;
-    transition: color 0.2s;
-}
-
-.header-phone:hover {
-    color: var(--accent-blue);
-}
-
-.social-links {
-    display: flex;
-    gap: 0.75rem;
-}
-
-.social-link {
-    color: #64748b;
-    transition: color 0.2s;
-    display: inline-flex;
-    align-items: center;
-}
-
-.social-link:hover {
-    color: var(--accent-blue);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
 .lang-switch a {
-    color: #334155;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s;
-    margin: 0 0.25rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 650;
+  padding: 8px 10px;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
 
 .lang-switch a:hover {
-    color: var(--accent-blue);
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
 }
 
-/* -------------------------------
-   ОСНОВНЫЕ БЛОКИ (СЕКЦИИ)
------------------------------------ */
-/* Единые отступы для всех секций */
-.services, .hero-slider, .products-section, .advantages, .faq, .map-contacts {
-    padding: var(--section-spacing) 0;
+.contact-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-/* Чередование фонов */
-.services, .advantages, .map-contacts {
-    background-color: var(--bg-soft);
+.header-phone {
+  font-weight: 750;
+  color: var(--text);
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
 }
 
-.products-section, .faq {
-    background-color: var(--bg-light);
+.header-phone:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
 }
 
-/* -------------------------------
-   ГЕРОЙ-СЛАЙДЕР
------------------------------------ */
+.social-links {
+  display: flex;
+  gap: 10px;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 65%, transparent);
+  color: var(--text-muted);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast), background var(--transition-fast);
+}
+
+.social-link:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  background: var(--surface);
+}
+
+.section {
+  padding: var(--section-space-mobile);
+  margin: 24px 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.section-hero {
+  padding: 0;
+  margin: 24px 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.section-head {
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  transition: transform var(--transition-fast), background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.28);
+}
+
+.btn-primary:hover {
+  background: var(--accent-strong);
+}
+
+.btn-ghost {
+  background: color-mix(in srgb, var(--surface) 65%, transparent);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.btn-ghost:hover {
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.hero-slider {
+  height: clamp(320px, 55vh, 660px);
+  min-height: 320px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background: var(--surface-2);
+}
 
 .hero-slide {
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 .hero-slide::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 1;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(1200px 500px at 50% 35%, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.62));
+  z-index: 1;
 }
 
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: min(760px, 92%);
+  padding: clamp(18px, 3vw, 32px);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, rgba(2, 6, 23, 0.65) 88%, transparent);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
 
-.hero-content h2 {
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: white;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+.hero-content h3 {
+  font-size: clamp(1.6rem, 5.2vw, 3rem);
+  margin-bottom: 10px;
+  color: white;
+  text-wrap: balance;
 }
 
 .hero-content p {
-    font-size: clamp(1rem, 3vw, 1.2rem);
-    color: white;
-    opacity: 0.95;
-    margin-bottom: 1.5rem;
-}
-
-.hero-button {
-    display: inline-block;
-    background: var(--accent-blue);
-    color: white;
-    padding: 12px 32px;
-    border-radius: 9999px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: background 0.2s;
-}
-
-.hero-button:hover {
-    background: var(--accent-blue-hover);
+  font-size: clamp(1rem, 2.6vw, 1.2rem);
+  color: rgba(255, 255, 255, 0.92);
+  margin: 0;
 }
 
 .swiper-pagination-bullet {
-    background: white;
-    opacity: 0.7;
+  background: rgba(255, 255, 255, 0.9);
+  opacity: 0.55;
 }
 
 .swiper-pagination-bullet-active {
-    background: white;
-    opacity: 1;
+  opacity: 1;
 }
 
-/* -------------------------------
-   СЕТКА УСЛУГ
------------------------------------ */
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  margin: 0;
 }
 
-.service-item {
-    background: var(--bg-light);
-    border-radius: 24px;
-    padding: 2rem;
-    text-align: center;
-    transition: var(--transition-default);
-    box-shadow: var(--card-shadow);
-}
-
-.service-item:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--card-hover-shadow);
-}
-
-.service-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-}
-
-.service-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-/* -------------------------------
-   ВИТРИНА ТОВАРОВ
------------------------------------ */
 .products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
 }
 
 .product-card {
-    background: var(--bg-light);
-    border-radius: 24px;
-    overflow: hidden;
-    transition: var(--transition-default);
-    box-shadow: var(--card-shadow);
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
 }
 
 .product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--card-hover-shadow);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
 }
 
 .product-img {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-    background: var(--bg-soft);
-    transition: transform 0.5s ease;
-}
-
-.product-card:hover .product-img {
-    transform: scale(1.02);
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  background: var(--surface-2);
 }
 
 .no-img {
-    height: 220px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    background: var(--bg-soft);
-    color: #94a3b8;
+  height: 220px;
+  display: grid;
+  place-items: center;
+  font-size: 3rem;
+  background: var(--surface-2);
+  color: color-mix(in srgb, var(--text-muted) 60%, transparent);
 }
 
 .product-info {
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
+  padding: 16px 16px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
 }
 
-.product-info h3 {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
+.product-title {
+  font-size: 1.15rem;
 }
 
-.price {
-    font-weight: 700;
-    font-size: 1.4rem;
-    color: var(--accent-blue);
-    margin: 0.5rem 0;
-}
-
-.desc {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    line-height: 1.5;
-    margin-bottom: 1rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+.product-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    width: fit-content;
-    margin-bottom: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .in-stock {
-    background: #e0f2fe;
-    color: #0369a1;
+  background: color-mix(in srgb, #0ea5e9 14%, var(--surface));
+  color: color-mix(in srgb, #0ea5e9 85%, var(--text));
+  border: 1px solid color-mix(in srgb, #0ea5e9 22%, var(--border));
 }
-.in-stock::before { content: "●"; font-size: 0.6rem; margin-right: 4px; color: #0ea5e9; }
 
 .sold {
-    background: #fee2e2;
-    color: #b91c1c;
+  background: color-mix(in srgb, #ef4444 14%, var(--surface));
+  color: color-mix(in srgb, #ef4444 85%, var(--text));
+  border: 1px solid color-mix(in srgb, #ef4444 22%, var(--border));
 }
-.sold::before { content: "●"; font-size: 0.6rem; margin-right: 4px; color: #dc2626; }
+
+.price {
+  margin: 0;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.price-label {
+  font-weight: 650;
+  color: var(--text-muted);
+  margin-right: 6px;
+}
+
+.desc {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
 .btn-order {
-    background: var(--text-dark);
-    color: white;
-    border: none;
-    padding: 12px 0;
-    border-radius: 9999px;
-    font-weight: 600;
-    text-align: center;
-    text-decoration: none;
-    transition: background 0.2s;
-    margin-top: auto;
-    display: block;
+  width: 100%;
+  margin-top: auto;
 }
 
-.btn-order:hover {
-    background: #1e293b;
-}
-
-/* -------------------------------
-   ПРЕИМУЩЕСТВА
------------------------------------ */
 .advantages-grid {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 3rem;
-    text-align: center;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
 }
 
-.advantage-item {
-    min-width: 120px;
+.advantage-card {
+  padding: 16px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  text-align: center;
 }
 
 .advantage-value {
-    font-size: clamp(2rem, 5vw, 2.5rem);
-    font-weight: 700;
-    color: var(--accent-blue);
-    margin-bottom: 0.5rem;
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  font-weight: 850;
+  color: var(--accent);
+  margin-bottom: 4px;
 }
 
 .advantage-label {
-    font-size: 0.9rem;
-    color: var(--text-muted);
+  font-size: 0.92rem;
+  color: var(--text-muted);
 }
 
-/* -------------------------------
-   FAQ
------------------------------------ */
 .faq-list {
-    max-width: 900px;
-    margin: 0 auto;
+  max-width: 920px;
+  margin: 0 auto;
+  display: grid;
+  gap: 10px;
 }
 
 .faq-item {
-    margin-bottom: 1rem;
-    border-bottom: 1px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  overflow: clip;
 }
 
 .faq-question {
-    background: transparent;
-    padding: 1.25rem 0;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: color 0.2s;
+  cursor: pointer;
+  padding: 14px 14px;
+  font-weight: 750;
+  list-style: none;
 }
 
-.faq-question:hover {
-    color: var(--accent-blue);
+.faq-question::-webkit-details-marker {
+  display: none;
 }
 
-.faq-toggle {
-    font-size: 1.5rem;
-    font-weight: 400;
-    transition: transform 0.2s;
+.faq-item > .faq-question {
+  position: relative;
+  padding-right: 46px;
+}
+
+.faq-item > .faq-question::after {
+  content: '+';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+  color: var(--text-muted);
+  background: var(--surface);
+}
+
+.faq-item[open] > .faq-question::after {
+  content: '−';
+  color: var(--text);
 }
 
 .faq-answer {
-    display: none;
-    padding: 0 0 1.5rem 0;
-    color: var(--text-muted);
-    line-height: 1.6;
-}
-
-/* -------------------------------
-   КАРТА И КОНТАКТЫ
------------------------------------ */
-.map-contacts .map-info h3 {
-    font-size: clamp(2rem, 5vw, 2.5rem);
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 3rem;
-    color: var(--text-dark);
-    letter-spacing: -0.02em;
+  padding: 0 14px 14px 14px;
+  color: var(--text-muted);
 }
 
 .map-info {
-    text-align: center;
-    max-width: 600px;
-    margin: 0 auto;
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
+  display: grid;
+  gap: 14px;
 }
 
 .address {
-    margin-bottom: 1rem;
-    color: var(--text-muted);
+  margin: 0;
+  color: var(--text-muted);
 }
 
 .map-links {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin: 1.5rem 0;
-}
-
-.map-link {
-    background: var(--text-dark);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 9999px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: background 0.2s;
-}
-
-.map-link:hover {
-    background: #1e293b;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .contact-simple a {
-    color: var(--accent-blue);
-    text-decoration: none;
-    font-weight: 600;
+  color: var(--accent);
+  font-weight: 800;
+  text-decoration: none;
 }
 
-/* -------------------------------
-   ФУТЕР
------------------------------------ */
 footer {
-    background: var(--bg-soft);
-    text-align: center;
-    padding: 2rem 0;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    border-top: 1px solid #e2e8f0;
+  margin-top: 28px;
+  padding: 24px 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  text-align: center;
 }
 
-/* -------------------------------
-   АДАПТИВНОСТЬ (МОБИЛЬНАЯ ВЕРСИЯ)
------------------------------------ */
+@media (max-width: 900px) {
+  .advantages-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
-    .container {
-        padding: 0 16px;
-    }
-    .services, .hero-slider, .products-section, .advantages, .faq, .map-contacts {
-        padding: var(--section-spacing-mobile) 0;
-    }
-    .header-inner {
-        flex-direction: column;
-        text-align: center;
-    }
-    .header-controls {
-        justify-content: center;
-    }
-    .contact-info {
-        flex-direction: column;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    .section-title {
-        margin-bottom: 2rem;
-    }
-    .services-grid {
-        gap: 1rem;
-    }
-    .products-grid {
-        gap: 1.5rem;
-    }
-    .map-contacts .map-info h3 {
-        margin-bottom: 2rem;
-    }
-}
-/* Уменьшаем отступы у блока "Наши услуги" (только заголовок) */
-/* Убедимся, что у всех заголовков одинаковые отступы снизу */
-.section-title,
-.map-contacts .map-info h3 {
-    margin-bottom: 3rem !important;
-}
-/* Уменьшаем отступы для блока "Наши услуги" (только заголовок) */
-/* Убираем внутренние отступы у слайдера */
-/* Блок "Наши услуги" + слайдер как единое целое */
-.services-slider-wrapper {
-    padding: 0;
-    margin-bottom: 0;
-}
-.hero-slider {
-    width: 100%;
-    height: 90vh;
-    min-height: 500px;
-    padding: 0 !important;
-    margin-top: 0;
-}
-/* Отступ после слайдера (к следующему блоку) будет задан через margin-bottom самого слайдера? 
-   Лучше задать общий отступ для всех секций, но слайдер не будет иметь внутренних отступов.
-   Пусть следующий блок (products-section) имеет свой padding-top, этого достаточно. */
-.section-title {
-    margin-bottom: 2rem; /* отступ от заголовка до слайдера */
-}
-/* Убираем возможные margin у заголовка */
-.section-title:first-child {
-    margin-top: 0;
-}
-/* Убираем верхние отступы у слайдера */
-.hero-slider {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
-.hero-slider .swiper-wrapper {
-    margin-top: 0 !important;
-}
-/* Добавляем отступ сверху к слайдеру 40px */
-.hero-slider {
-    margin-top: 40px !important;
-}
-/* Убираем лишние отступы у заголовка перед слайдером */
-.services .section-title,
-.hero-slider-parent .section-title,
-.section-title:first-child {
-    margin-bottom: 40px !important;
-}
-.hero-slider {
-    margin-top: 0 !important;
-}
-/* Уменьшаем отступ между "Наши услуги" и слайдером */
-.section-title {
-    margin-bottom: 10px !important;
-}
-.hero-slider {
-    margin-top: 0 !important;
-}
-/* Прижимаем слайдер к заголовку */
-.section-title {
-    margin-bottom: 10px !important;
-}
-.hero-slider {
-    margin-top: 0 !important;
-}
-/* Убираем внутренние отступы у слайдера и добавляем внешний отступ 40px сверху */
-.hero-slider {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    margin-top: 40px !important;
-}
-/* Прижимаем слайдер к заголовку */
-.hero-slider {
-    padding-top: 0 !important;
-}
-.section-title {
-    margin-bottom: 20px !important;
-}
-/* Настройка отступов для слайдера с заголовком внутри */
-.hero-slider {
-    padding-top: 0 !important;
-    margin-top: 0 !important;
-}
-.hero-slider .section-title {
-    margin-bottom: 20px;
+  .container {
+    padding: 0 16px;
+  }
+  .header-inner {
+    flex-direction: column;
     text-align: center;
-}
-.hero-slider .swiper-wrapper {
-    margin-top: 0;
-}
-/* Настройка отступов для слайдера с заголовком внутри */
-.hero-slider {
-    padding-top: 0 !important;
-    margin-top: 0 !important;
-}
-.hero-slider .section-title {
-    margin: 20px;
-    text-align: center;
-}
-.hero-slider .swiper-wrapper {
-    margin-top: 0;
-}
-/* Вертикальное центрирование текста на слайдах */
-.hero-slide {
-    display: flex;
-    align-items: center;
+  }
+  .header-controls {
     justify-content: center;
-    text-align: center;
-}
-/* Убираем возможные лишние отступы у заголовков и параграфов внутри слайда */
-.hero-content h2,
-.hero-content p {
-    margin: 0 0 0.5rem 0;
-    text-align: center;
-}
-.hero-content p {
-    margin-bottom: 0;
-}
-/* Принудительное вертикальное центрирование для слайдов */
-.hero-slide {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-}
-.hero-content h2,
-.hero-content p {
-    margin: 0 0 0.5rem 0;
-    text-align: center;
-}
-.hero-content p {
-    margin-bottom: 0;
-}
-/* Группируем заголовок и описание, центрируем блок по вертикали */
-.hero-slide {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-/* Убираем лишние отступы, чтобы блок был компактным */
-.hero-content h2 {
-    margin: 0 0 0.5rem 0;
-}
-.hero-content p {
-    margin: 0;
-}
-/* Уменьшенная высота слайдера */
-.hero-slider {
-    height: 60vh !important;
-    max-height: 600px !important;
-    min-height: 350px !important;
-}
-/* Центрирование контента по вертикали и горизонтали */
-.hero-slide {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-}
-/* Группировка текста для центрирования как единого блока */
-.hero-content h2 {
-    margin-bottom: 0.5rem;
-    font-size: clamp(1.2rem, 4vw, 2rem);
-}
-.hero-content p {
-    margin-bottom: 0;
-    font-size: clamp(0.8rem, 3vw, 1rem);
-}
-/* На мобильных устройствах высота меньше */
-@media (max-width: 768px) {
-    .hero-slider {
-        height: 40vh !important;
-        min-height: 250px !important;
-    }
-/* 1. Исправляем размер и позиционирование картинки */
-.hero-slide {
-    /* Заставляем картинку заполнять весь слайд без искажений */
-    background-size: cover !important;
-    background-position: center center !important;
+  }
+  .contact-info {
+    justify-content: center;
+  }
+  .section {
+    margin: 16px 0;
+    padding: 18px;
+  }
+  .hero-slider {
+    height: clamp(260px, 42vh, 420px);
+  }
+  .products-grid {
+    gap: 14px;
+  }
 }
 
-/* 2. Заставляем текст встать по центру */
-.hero-slider .swiper-wrapper {
-    /* Самый важный момент! Это нужно, чтобы высота слайда не зависела от текста */
-    height: 100% !important;
-}
-
-
-
-/* Убираем лишние отступы у заголовков и параграфов */
-.hero-content h2,
-.hero-content p {
-    margin: 0 0 0.5rem 0 !important;
-    padding: 0 !important;
-}
-/* Убираем возможные конфликты с flexbox */
-.hero-slide {
-    display: block !important;
-}
-.hero-content h2,
-.hero-content p {
-    margin: 0 0 0.25rem 0 !important;
-}
-/* Чистое центрирование через flexbox */
-.hero-slider .swiper-slide {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-    height: auto !important;
-}
-.hero-content {
-    display: block !important;
-    width: 100% !important;
-    padding: 20px !important;
-    box-sizing: border-box !important;
-    background: transparent !important;
-}
-.hero-content h2,
-.hero-content p {
-    margin: 0 0 0.5rem 0 !important;
-    color: white !important;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5) !important;
-}
-/* Переопределение стилей слайдера для читаемого текста и центрирования */
-.hero-slider .swiper-slide {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    position: relative;
-    z-index: 1;
-}
-.hero-slide::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 2;
-}
-.hero-content {
-    position: relative;
-    z-index: 3;
-    text-align: center;
-    color: white;
-    max-width: 80%;
-    margin: 0 auto;
-    padding: 20px;
-}
-.hero-content h2 {
-    font-size: 2.5rem !important;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    text-shadow: 1px 1px 2px black;
-}
-.hero-content p {
-    font-size: 1.2rem !important;
-    margin-bottom: 0;
-    text-shadow: 1px 1px 1px black;
-}
-@media (max-width: 768px) {
-    .hero-content h2 {
-        font-size: 1.6rem !important;
-    }
-    .hero-content p {
-        font-size: 1rem !important;
-    }
-}
-/* Вертикальное центрирование через flex */
-.hero-slide {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-    position: relative;
-    background-size: cover;
-    background-position: center;
-}
-/* Затемнение - но чтобы текст был над ним */
-.hero-slide::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* чуть светлее */
-    z-index: 1;
-}
-.hero-content {
-    position: relative;
-    z-index: 2;
-    max-width: 80%;
-    padding: 20px;
-    text-align: center;
-}
-.hero-content h2 {
-    font-size: clamp(1.5rem, 5vw, 2.5rem);
-    font-weight: 700;
-    color: white;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    margin-bottom: 0.75rem;
-}
-.hero-content p {
-    font-size: clamp(1rem, 3vw, 1.2rem);
-    color: white;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-    margin-bottom: 0;
-}
-/* Убираем предыдущие transform и лишние стили */
-.hero-content {
-    transform: none !important;
-    top: auto !important;
-}
-/* Полное переопределение высоты и центрирования для слайдов Swiper */
-.swiper {
-    overflow: hidden;
-}
-.hero-slider .swiper-wrapper {
-    height: 100% !important;
-}
-.hero-slider .swiper-slide {
-    height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-    background-size: cover !important;
-    background-position: center !important;
-    position: relative !important;
-}
-.hero-content {
-    position: relative;
-    z-index: 2;
-    max-width: 80%;
-    margin: 0 auto;
-    text-align: center;
-}
-.hero-content h2 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
-.hero-content p {
-    font-size: 1.2rem;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
-/* Затемнение остается, но текст поверх */
-.hero-slide::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 1;
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -35,28 +35,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
     <title><?php echo t('title'); ?></title>
+    <link rel="stylesheet" href="style.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: system-ui; background: #0f172a; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-box { background: white; padding: 40px; border-radius: 32px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 320px; text-align: center; }
-        input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #cbd5e1; border-radius: 24px; }
-        button { background: #0f172a; color: white; border: none; padding: 12px; width: 100%; border-radius: 24px; cursor: pointer; }
-        .error { color: #dc2626; background: #fee2e2; padding: 8px; border-radius: 16px; margin-bottom: 15px; }
-        .lang-switch a { margin: 0 5px; text-decoration: none; color: #2563eb; }
+        .auth { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+        .auth-card { width: min(420px, 100%); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; text-align: center; }
+        .auth-title { font-size: 1.35rem; margin: 12px 0 10px; }
+        .auth-form { display: grid; gap: 10px; margin-top: 14px; }
+        .auth-label { text-align: left; font-weight: 700; color: var(--text); }
+        .auth-input { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text); }
+        .error { color: color-mix(in srgb, #ef4444 85%, var(--text)); background: color-mix(in srgb, #ef4444 12%, var(--surface)); border: 1px solid color-mix(in srgb, #ef4444 18%, var(--border)); padding: 10px; border-radius: 12px; margin: 10px 0; }
+        .lang-switch { display: flex; justify-content: center; gap: 10px; margin-bottom: 8px; }
+        .lang-switch a { text-decoration: none; font-weight: 750; color: var(--text-muted); padding: 8px 10px; border-radius: 9999px; border: 1px solid transparent; }
+        .lang-switch a:hover { border-color: var(--border); background: var(--surface-2); color: var(--text); }
     </style>
 </head>
 <body>
-<div class="login-box">
-    <div class="lang-switch">
+<div class="auth">
+<div class="auth-card">
+    <div class="lang-switch" aria-label="Language switch">
         <a href="?lang=ru&secret=<?php echo urlencode(ADMIN_SECRET); ?>">Рус</a> |
         <a href="?lang=ko&secret=<?php echo urlencode(ADMIN_SECRET); ?>">한국어</a>
     </div>
-    <h2><?php echo t('title'); ?></h2>
+    <h1 class="auth-title"><?php echo t('title'); ?></h1>
     <?php if (isset($error)) echo "<div class='error'>$error</div>"; ?>
-    <form method="post">
-        <input type="password" name="password" placeholder="<?php echo t('password'); ?>" required>
-        <button type="submit"><?php echo t('submit'); ?></button>
+    <form method="post" class="auth-form">
+        <label class="auth-label" for="password"><?php echo t('password'); ?></label>
+        <input class="auth-input" id="password" type="password" name="password" autocomplete="current-password" required>
+        <button class="btn btn-primary" type="submit"><?php echo t('submit'); ?></button>
     </form>
+</div>
 </div>
 </body>
 </html>

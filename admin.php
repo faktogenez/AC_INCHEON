@@ -142,31 +142,33 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
     <title><?php echo t('title'); ?></title>
+    <link rel="stylesheet" href="style.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: system-ui, sans-serif; background: #f1f5f9; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h1, h2 { color: #0f172a; }
-        label { display: block; margin: 15px 0 5px; font-weight: 600; }
-        input, textarea, button { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 12px; }
-        button { background: #2563eb; color: white; border: none; cursor: pointer; font-size: 1rem; }
-        button:hover { background: #1e40af; }
-        .admin-item { background: #f8fafc; padding: 12px; margin: 10px 0; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; }
-        .admin-item a { color: #dc2626; text-decoration: none; font-weight: bold; }
-        .lang-switch { margin-bottom: 20px; text-align: right; }
-        .error { color: #dc2626; background: #fee2e2; padding: 10px; border-radius: 12px; }
-        .success { color: #15803d; background: #dcfce7; padding: 10px; border-radius: 12px; }
-        nav a { margin-right: 15px; text-decoration: none; color: #2563eb; }
+        body { margin: 0; padding: 20px; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); }
+        .admin-container { max-width: 980px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; }
+        h1 { font-size: 1.4rem; margin: 0 0 12px; }
+        h2 { font-size: 1.15rem; margin: 18px 0 10px; }
+        label { display: block; margin: 12px 0 6px; font-weight: 750; }
+        input, textarea { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text); }
+        textarea { min-height: 110px; resize: vertical; }
+        .admin-actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+        .admin-actions a { text-decoration: none; }
+        .admin-item { background: color-mix(in srgb, var(--surface) 82%, transparent); border: 1px solid var(--border); padding: 12px; margin: 10px 0; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .admin-item a { color: color-mix(in srgb, #ef4444 85%, var(--text)); text-decoration: none; font-weight: 850; }
+        .error { color: color-mix(in srgb, #ef4444 85%, var(--text)); background: color-mix(in srgb, #ef4444 12%, var(--surface)); border: 1px solid color-mix(in srgb, #ef4444 18%, var(--border)); padding: 10px; border-radius: 12px; margin: 10px 0; }
+        .success { color: color-mix(in srgb, #22c55e 85%, var(--text)); background: color-mix(in srgb, #22c55e 10%, var(--surface)); border: 1px solid color-mix(in srgb, #22c55e 18%, var(--border)); padding: 10px; border-radius: 12px; margin: 10px 0; }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="lang-switch">
-        <a href="?lang=ru">Рус</a> | <a href="?lang=ko">한국어</a>
-        <nav style="margin-top: 10px;">
-            <a href="index.php?lang=<?php echo $lang; ?>"><?php echo t('home'); ?></a>
-            <a href="logout.php"><?php echo t('logout'); ?></a>
-        </nav>
+<div class="admin-container">
+    <div class="admin-actions">
+        <a class="btn btn-ghost" href="?lang=ru">Рус</a>
+        <a class="btn btn-ghost" href="?lang=ko">한국어</a>
+        <a class="btn btn-ghost" href="index.php?lang=<?php echo $lang; ?>"><?php echo t('home'); ?></a>
+        <a class="btn btn-ghost" href="logout.php"><?php echo t('logout'); ?></a>
     </div>
     
     <h1><?php echo t('title'); ?></h1>
@@ -193,7 +195,7 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
         <label><?php echo t('image'); ?></label>
         <input type="file" name="image" accept="image/jpeg,image/png,image/webp">
         
-        <button type="submit" name="add_product"><?php echo t('submit'); ?></button>
+        <button class="btn btn-primary" type="submit" name="add_product"><?php echo t('submit'); ?></button>
     </form>
     
     <h2><?php echo t('existing'); ?></h2>

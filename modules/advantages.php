@@ -4,14 +4,16 @@ global $PROJECT_CONFIG, $lang;
 
 $advantages = $PROJECT_CONFIG['advantages'][$lang];
 ?>
-<div class="advantages">
-    <h2 class="section-title"><?php echo $lang == 'ru' ? 'Почему выбирают нас' : '선택 이유'; ?></h2>
+<section class="section advantages" aria-labelledby="advantages-title">
+    <div class="section-head">
+        <h2 class="section-title" id="advantages-title"><?php echo $lang == 'ru' ? 'Почему выбирают нас' : '선택 이유'; ?></h2>
+    </div>
     <div class="advantages-grid">
         <?php foreach ($advantages as $item): ?>
-            <div class="advantage-item">
+            <div class="advantage-card">
                 <div class="advantage-value"><?php echo htmlspecialchars($item['value']); ?></div>
                 <div class="advantage-label"><?php echo htmlspecialchars($item['label']); ?></div>
             </div>
         <?php endforeach; ?>
     </div>
-</div>
+</section>

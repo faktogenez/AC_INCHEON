@@ -39,6 +39,7 @@ global $PROJECT_CONFIG, $lang, $lang_strings, $pdo;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="color-scheme" content="light dark">
     <title><?php echo $PROJECT_CONFIG['site_name'][$lang]; ?> | <?php echo $PROJECT_CONFIG['site_subtitle'][$lang]; ?></title>
     <link rel="stylesheet" href="style.css?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
@@ -47,6 +48,7 @@ global $PROJECT_CONFIG, $lang, $lang_strings, $pdo;
 
 </head>
 <body>
+<a class="skip-link" href="#main"><?php echo $lang === 'ru' ? 'Перейти к содержимому' : '본문으로 이동'; ?></a>
 <header>
     <div class="container header-inner">
         <div class="logo">
@@ -81,7 +83,7 @@ global $PROJECT_CONFIG, $lang, $lang_strings, $pdo;
         </div>
     </div>
 </header>
-<main class="container">
+<main class="container" id="main">
     <?php
     // Подключаем модули в нужном порядке
     include __DIR__ . '/modules/hero-slider.php';

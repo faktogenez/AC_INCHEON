@@ -26,7 +26,14 @@ jobs:
 
       - name: Deploy via rsync
         run: |
-          rsync -az --delete --exclude='.git/' --exclude='.github/' -e "ssh -i ~/.ssh/id_ed25519" ./ "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/var/www/ac-incheon/"
+          rsync -az --delete \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='uploads/' \
+            --exclude='thumbnails/' \
+            --exclude='ac_shop.db' \
+            --exclude='php.ini' \
+            -e "ssh -i ~/.ssh/id_ed25519" ./ "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/var/www/ac-incheon/"
 
       - name: Reload PHP-FPM
         continue-on-error: true
