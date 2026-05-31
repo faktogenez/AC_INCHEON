@@ -13,6 +13,7 @@ function parseProductSpecs(string $text, string $lang): array {
     $specs = [];
     $rest = [];
     $condition = null;
+    $short = null;
 
     foreach ($lines as $line) {
         $line = trim($line);
@@ -31,6 +32,15 @@ function parseProductSpecs(string $text, string $lang): array {
             continue;
         }
         if (preg_match('/^\s*(Б\\/У|БУ|중고)\s*$/iu', $line)) {
+            continue;
+        }
+
+        if ($short === null && preg_match('/^(Кратко|Краткое описание)\s*:\s*(.+)$/iu', $line, $m)) {
+            $short = trim($m[2]);
+            continue;
+        }
+        if ($short === null && preg_match('/^(간단\s*설명|요약)\s*:\s*(.+)$/iu', $line, $m)) {
+            $short = trim($m[2]);
             continue;
         }
 
@@ -82,6 +92,7 @@ function parseProductSpecs(string $text, string $lang): array {
 
     return [
         'specs' => array_slice($specs, 0, 4),
+        'short' => $short,
         'rest' => implode("\n", $rest),
         'condition' => $condition,
     ];
@@ -99,6 +110,7 @@ function parseProductSpecs(string $text, string $lang): array {
                 <?php
                 $parsed = parseProductSpecs((string)($prod["desc_$lang"] ?? ''), (string)$lang);
                 $specs = $parsed['specs'] ?? [];
+                $short = (string)($parsed['short'] ?? '');
                 $descRest = (string)($parsed['rest'] ?? '');
                 $condition = $parsed['condition'] ?? null;
                 ?>
@@ -125,6 +137,9 @@ function parseProductSpecs(string $text, string $lang): array {
                         <div class="product-meta">
                             <p class="price"><span class="price-label"><?php echo t('price_label'); ?>:</span> <?php echo htmlspecialchars($prod['price']); ?> 원</p>
                         </div>
+                        <?php if ($short !== ''): ?>
+                            <p class="product-short"><?php echo htmlspecialchars($short); ?></p>
+                        <?php endif; ?>
                         <?php if (!empty($specs)): ?>
                             <ul class="product-specs">
                                 <?php foreach ($specs as $spec): ?>
