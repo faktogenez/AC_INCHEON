@@ -500,11 +500,17 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
         .hint { margin-top: 6px; color: var(--text-muted); font-size: 0.92rem; }
         .admin-actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
         .admin-actions a { text-decoration: none; }
+        .admin-actions .btn { min-width: 44px; display: inline-flex; justify-content: center; align-items: center; }
         .admin-item { background: color-mix(in srgb, var(--surface) 82%, transparent); border: 1px solid var(--border); padding: 12px; margin: 10px 0; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
         .admin-item .admin-links { display: flex; gap: 12px; align-items: center; }
         .admin-item .admin-link { text-decoration: none; font-weight: 850; font-size: 1.1rem; line-height: 1; padding: 8px; border-radius: 10px; }
         .admin-item .admin-link:hover { background: color-mix(in srgb, var(--surface-2) 60%, transparent); }
         .admin-item .admin-link-delete { color: color-mix(in srgb, #ef4444 85%, var(--text)); }
+        .admin-section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .admin-section-head h2 { margin: 18px 0 10px; }
+        .admin-icon-btn { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; border: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 70%, transparent); color: var(--text); text-decoration: none; }
+        .admin-icon-btn:hover { background: color-mix(in srgb, var(--surface-2) 70%, transparent); }
+        .admin-icon-danger { color: color-mix(in srgb, #ef4444 85%, var(--text)); }
         .error { color: color-mix(in srgb, #ef4444 85%, var(--text)); background: color-mix(in srgb, #ef4444 12%, var(--surface)); border: 1px solid color-mix(in srgb, #ef4444 18%, var(--border)); padding: 10px; border-radius: 12px; margin: 10px 0; }
         .success { color: color-mix(in srgb, #22c55e 85%, var(--text)); background: color-mix(in srgb, #22c55e 10%, var(--surface)); border: 1px solid color-mix(in srgb, #22c55e 18%, var(--border)); padding: 10px; border-radius: 12px; margin: 10px 0; }
         .admin-item-main { min-width: 0; }
@@ -524,10 +530,8 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
 <body>
 <div class="admin-container">
     <div class="admin-actions">
-        <a class="btn btn-ghost" href="index.php?lang=ru"><?php echo t('home'); ?></a>
-        <a class="btn btn-ghost" href="?delete_all=1" onclick="return confirm('Удалить ВСЕ товары?')"
-           aria-label="Удалить все" title="Удалить все">🗑️</a>
-        <a class="btn btn-ghost" href="logout.php"><?php echo t('logout'); ?></a>
+        <a class="btn btn-ghost" href="index.php?lang=ru" aria-label="На главную" title="На главную">🏠</a>
+        <a class="btn btn-ghost" href="logout.php" aria-label="Выход" title="Выход">🚪</a>
     </div>
     
     <h1><?php echo t('title'); ?></h1>
@@ -605,7 +609,12 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
         </div>
     </form>
     
-    <h2><?php echo t('existing'); ?></h2>
+    <div class="admin-section-head">
+        <h2><?php echo t('existing'); ?></h2>
+        <a class="admin-icon-btn admin-icon-danger" href="?delete_all=1"
+           onclick="return confirm('Удалить ВСЕ товары?')"
+           aria-label="Удалить все" title="Удалить все">🗑️</a>
+    </div>
     <?php foreach ($products as $prod): ?>
         <div class="admin-item">
             <?php
