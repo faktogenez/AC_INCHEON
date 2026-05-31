@@ -6,6 +6,38 @@ $table = $PROJECT_CONFIG['table_name'];
 $stmt = $pdo->query("SELECT * FROM $table ORDER BY created_at DESC");
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+function pyeongToSqm(string $value): ?string {
+    if (preg_match('/㎡/u', $value)) {
+        return null;
+    }
+
+    $raw = str_replace([' ', "\t"], '', $value);
+    $pyeong = null;
+
+    if (preg_match('/^(\d+(?:[.,]\d+)?)$/u', $raw, $m)) {
+        $pyeong = (float)str_replace(',', '.', $m[1]);
+    } elseif (preg_match('/^(\d+(?:[.,]\d+)?)(?:평|py|pyeong)\b/iu', $raw, $m)) {
+        $pyeong = (float)str_replace(',', '.', $m[1]);
+    } elseif (preg_match('/^(\d+(?:[.,]\d+)?)(?:\+(\d+(?:[.,]\d+)?))+평/iu', $raw)) {
+        $sum = 0.0;
+        foreach (preg_split('/\+/', preg_replace('/평/iu', '', $raw)) as $part) {
+            $part = trim($part);
+            if ($part === '') continue;
+            $sum += (float)str_replace(',', '.', $part);
+        }
+        if ($sum > 0) {
+            $pyeong = $sum;
+        }
+    }
+
+    if ($pyeong === null || $pyeong <= 0) {
+        return null;
+    }
+
+    $sqm = (int)round($pyeong * 3.305785);
+    return $sqm . '㎡';
+}
+
 function parseProductSpecs(string $text, string $lang): array {
     $raw = preg_replace("/\r\n|\r/u", "\n", trim($text));
     $lines = preg_split("/\n/u", $raw);
@@ -52,10 +84,15 @@ function parseProductSpecs(string $text, string $lang): array {
         }
 
         if (preg_match('/^(Площадь помещения|Площадь|면적|평수)\\s*:\\s*(.+)$/iu', $line, $m)) {
+            $areaValue = trim($m[2]);
+            $sqm = pyeongToSqm($areaValue);
+            if ($sqm !== null) {
+                $areaValue .= ' (' . $sqm . ')';
+            }
             $specs[] = [
                 'key' => 'area',
                 'label' => $lang === 'ru' ? 'Площадь' : '면적',
-                'value' => trim($m[2]),
+                'value' => $areaValue,
             ];
             continue;
         }
@@ -116,8 +153,20 @@ function parseProductSpecs(string $text, string $lang): array {
                 ?>
                 <article class="product-card">
                     <div class="product-media">
-                        <?php if (!empty($prod['image']) && file_exists($PROJECT_CONFIG['thumb_dir'] . $prod['image'])): ?>
-                            <img src="<?php echo $PROJECT_CONFIG['thumb_dir'] . htmlspecialchars($prod['image']); ?>" alt="<?php echo htmlspecialchars($prod["name_$lang"]); ?>" class="product-img" loading="lazy">
+                        <?php
+                        $imgSrc = null;
+                        if (!empty($prod['image'])) {
+                            $thumbPath = $PROJECT_CONFIG['thumb_dir'] . $prod['image'];
+                            $uploadPath = $PROJECT_CONFIG['upload_dir'] . $prod['image'];
+                            if (file_exists($thumbPath)) {
+                                $imgSrc = $PROJECT_CONFIG['thumb_dir'] . $prod['image'];
+                            } elseif (file_exists($uploadPath)) {
+                                $imgSrc = $PROJECT_CONFIG['upload_dir'] . $prod['image'];
+                            }
+                        }
+                        ?>
+                        <?php if ($imgSrc !== null): ?>
+                            <img src="<?php echo htmlspecialchars($imgSrc); ?>" alt="<?php echo htmlspecialchars($prod["name_$lang"]); ?>" class="product-img" loading="lazy">
                         <?php else: ?>
                             <div class="no-img" aria-hidden="true">📷</div>
                         <?php endif; ?>
