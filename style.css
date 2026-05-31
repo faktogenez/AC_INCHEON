@@ -1,0 +1,893 @@
+/* -------------------------------
+   БАЗОВЫЕ ПЕРЕМЕННЫЕ И НАСТРОЙКИ
+----------------------------------- */
+:root {
+    --bg-light: #ffffff;
+    --bg-soft: #f8fafc;
+    --text-dark: #0f172a;
+    --text-muted: #475569;
+    --accent-blue: #2563eb;
+    --accent-blue-hover: #1e40af;
+    --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+    --card-hover-shadow: 0 25px 30px -10px rgba(0, 0, 0, 0.1);
+    --transition-default: all 0.3s ease;
+    --section-spacing: 100px;
+    --section-spacing-mobile: 60px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* -------------------------------
+   ГЛОБАЛЬНЫЕ СТИЛИ ДЛЯ ЗАГОЛОВКОВ
+----------------------------------- */
+h1, h2, h3, .section-title {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.section-title {
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+/* -------------------------------
+   СТИЛИ ШАПКИ (HEADER)
+----------------------------------- */
+header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.header-inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    gap: 1rem;
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.contact-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.header-phone {
+    font-weight: 600;
+    color: var(--text-dark);
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: color 0.2s;
+}
+
+.header-phone:hover {
+    color: var(--accent-blue);
+}
+
+.social-links {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.social-link {
+    color: #64748b;
+    transition: color 0.2s;
+    display: inline-flex;
+    align-items: center;
+}
+
+.social-link:hover {
+    color: var(--accent-blue);
+}
+
+.lang-switch a {
+    color: #334155;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+    margin: 0 0.25rem;
+}
+
+.lang-switch a:hover {
+    color: var(--accent-blue);
+}
+
+/* -------------------------------
+   ОСНОВНЫЕ БЛОКИ (СЕКЦИИ)
+----------------------------------- */
+/* Единые отступы для всех секций */
+.services, .hero-slider, .products-section, .advantages, .faq, .map-contacts {
+    padding: var(--section-spacing) 0;
+}
+
+/* Чередование фонов */
+.services, .advantages, .map-contacts {
+    background-color: var(--bg-soft);
+}
+
+.products-section, .faq {
+    background-color: var(--bg-light);
+}
+
+/* -------------------------------
+   ГЕРОЙ-СЛАЙДЕР
+----------------------------------- */
+
+.hero-slide {
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.hero-slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+
+.hero-content h2 {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.hero-content p {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    color: white;
+    opacity: 0.95;
+    margin-bottom: 1.5rem;
+}
+
+.hero-button {
+    display: inline-block;
+    background: var(--accent-blue);
+    color: white;
+    padding: 12px 32px;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.hero-button:hover {
+    background: var(--accent-blue-hover);
+}
+
+.swiper-pagination-bullet {
+    background: white;
+    opacity: 0.7;
+}
+
+.swiper-pagination-bullet-active {
+    background: white;
+    opacity: 1;
+}
+
+/* -------------------------------
+   СЕТКА УСЛУГ
+----------------------------------- */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.service-item {
+    background: var(--bg-light);
+    border-radius: 24px;
+    padding: 2rem;
+    text-align: center;
+    transition: var(--transition-default);
+    box-shadow: var(--card-shadow);
+}
+
+.service-item:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--card-hover-shadow);
+}
+
+.service-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.service-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* -------------------------------
+   ВИТРИНА ТОВАРОВ
+----------------------------------- */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.product-card {
+    background: var(--bg-light);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: var(--transition-default);
+    box-shadow: var(--card-shadow);
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--card-hover-shadow);
+}
+
+.product-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    background: var(--bg-soft);
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-img {
+    transform: scale(1.02);
+}
+
+.no-img {
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    background: var(--bg-soft);
+    color: #94a3b8;
+}
+
+.product-info {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.price {
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--accent-blue);
+    margin: 0.5rem 0;
+}
+
+.desc {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    width: fit-content;
+    margin-bottom: 1rem;
+}
+
+.in-stock {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+.in-stock::before { content: "●"; font-size: 0.6rem; margin-right: 4px; color: #0ea5e9; }
+
+.sold {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+.sold::before { content: "●"; font-size: 0.6rem; margin-right: 4px; color: #dc2626; }
+
+.btn-order {
+    background: var(--text-dark);
+    color: white;
+    border: none;
+    padding: 12px 0;
+    border-radius: 9999px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.2s;
+    margin-top: auto;
+    display: block;
+}
+
+.btn-order:hover {
+    background: #1e293b;
+}
+
+/* -------------------------------
+   ПРЕИМУЩЕСТВА
+----------------------------------- */
+.advantages-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 3rem;
+    text-align: center;
+}
+
+.advantage-item {
+    min-width: 120px;
+}
+
+.advantage-value {
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-weight: 700;
+    color: var(--accent-blue);
+    margin-bottom: 0.5rem;
+}
+
+.advantage-label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* -------------------------------
+   FAQ
+----------------------------------- */
+.faq-list {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.faq-question {
+    background: transparent;
+    padding: 1.25rem 0;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: color 0.2s;
+}
+
+.faq-question:hover {
+    color: var(--accent-blue);
+}
+
+.faq-toggle {
+    font-size: 1.5rem;
+    font-weight: 400;
+    transition: transform 0.2s;
+}
+
+.faq-answer {
+    display: none;
+    padding: 0 0 1.5rem 0;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* -------------------------------
+   КАРТА И КОНТАКТЫ
+----------------------------------- */
+.map-contacts .map-info h3 {
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--text-dark);
+    letter-spacing: -0.02em;
+}
+
+.map-info {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.address {
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+}
+
+.map-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.map-link {
+    background: var(--text-dark);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.map-link:hover {
+    background: #1e293b;
+}
+
+.contact-simple a {
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* -------------------------------
+   ФУТЕР
+----------------------------------- */
+footer {
+    background: var(--bg-soft);
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* -------------------------------
+   АДАПТИВНОСТЬ (МОБИЛЬНАЯ ВЕРСИЯ)
+----------------------------------- */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 16px;
+    }
+    .services, .hero-slider, .products-section, .advantages, .faq, .map-contacts {
+        padding: var(--section-spacing-mobile) 0;
+    }
+    .header-inner {
+        flex-direction: column;
+        text-align: center;
+    }
+    .header-controls {
+        justify-content: center;
+    }
+    .contact-info {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .section-title {
+        margin-bottom: 2rem;
+    }
+    .services-grid {
+        gap: 1rem;
+    }
+    .products-grid {
+        gap: 1.5rem;
+    }
+    .map-contacts .map-info h3 {
+        margin-bottom: 2rem;
+    }
+}
+/* Уменьшаем отступы у блока "Наши услуги" (только заголовок) */
+/* Убедимся, что у всех заголовков одинаковые отступы снизу */
+.section-title,
+.map-contacts .map-info h3 {
+    margin-bottom: 3rem !important;
+}
+/* Уменьшаем отступы для блока "Наши услуги" (только заголовок) */
+/* Убираем внутренние отступы у слайдера */
+/* Блок "Наши услуги" + слайдер как единое целое */
+.services-slider-wrapper {
+    padding: 0;
+    margin-bottom: 0;
+}
+.hero-slider {
+    width: 100%;
+    height: 90vh;
+    min-height: 500px;
+    padding: 0 !important;
+    margin-top: 0;
+}
+/* Отступ после слайдера (к следующему блоку) будет задан через margin-bottom самого слайдера? 
+   Лучше задать общий отступ для всех секций, но слайдер не будет иметь внутренних отступов.
+   Пусть следующий блок (products-section) имеет свой padding-top, этого достаточно. */
+.section-title {
+    margin-bottom: 2rem; /* отступ от заголовка до слайдера */
+}
+/* Убираем возможные margin у заголовка */
+.section-title:first-child {
+    margin-top: 0;
+}
+/* Убираем верхние отступы у слайдера */
+.hero-slider {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+.hero-slider .swiper-wrapper {
+    margin-top: 0 !important;
+}
+/* Добавляем отступ сверху к слайдеру 40px */
+.hero-slider {
+    margin-top: 40px !important;
+}
+/* Убираем лишние отступы у заголовка перед слайдером */
+.services .section-title,
+.hero-slider-parent .section-title,
+.section-title:first-child {
+    margin-bottom: 40px !important;
+}
+.hero-slider {
+    margin-top: 0 !important;
+}
+/* Уменьшаем отступ между "Наши услуги" и слайдером */
+.section-title {
+    margin-bottom: 10px !important;
+}
+.hero-slider {
+    margin-top: 0 !important;
+}
+/* Прижимаем слайдер к заголовку */
+.section-title {
+    margin-bottom: 10px !important;
+}
+.hero-slider {
+    margin-top: 0 !important;
+}
+/* Убираем внутренние отступы у слайдера и добавляем внешний отступ 40px сверху */
+.hero-slider {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 40px !important;
+}
+/* Прижимаем слайдер к заголовку */
+.hero-slider {
+    padding-top: 0 !important;
+}
+.section-title {
+    margin-bottom: 20px !important;
+}
+/* Настройка отступов для слайдера с заголовком внутри */
+.hero-slider {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+.hero-slider .section-title {
+    margin-bottom: 20px;
+    text-align: center;
+}
+.hero-slider .swiper-wrapper {
+    margin-top: 0;
+}
+/* Настройка отступов для слайдера с заголовком внутри */
+.hero-slider {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+.hero-slider .section-title {
+    margin: 20px;
+    text-align: center;
+}
+.hero-slider .swiper-wrapper {
+    margin-top: 0;
+}
+/* Вертикальное центрирование текста на слайдах */
+.hero-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+/* Убираем возможные лишние отступы у заголовков и параграфов внутри слайда */
+.hero-content h2,
+.hero-content p {
+    margin: 0 0 0.5rem 0;
+    text-align: center;
+}
+.hero-content p {
+    margin-bottom: 0;
+}
+/* Принудительное вертикальное центрирование для слайдов */
+.hero-slide {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+.hero-content h2,
+.hero-content p {
+    margin: 0 0 0.5rem 0;
+    text-align: center;
+}
+.hero-content p {
+    margin-bottom: 0;
+}
+/* Группируем заголовок и описание, центрируем блок по вертикали */
+.hero-slide {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+/* Убираем лишние отступы, чтобы блок был компактным */
+.hero-content h2 {
+    margin: 0 0 0.5rem 0;
+}
+.hero-content p {
+    margin: 0;
+}
+/* Уменьшенная высота слайдера */
+.hero-slider {
+    height: 60vh !important;
+    max-height: 600px !important;
+    min-height: 350px !important;
+}
+/* Центрирование контента по вертикали и горизонтали */
+.hero-slide {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+/* Группировка текста для центрирования как единого блока */
+.hero-content h2 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.2rem, 4vw, 2rem);
+}
+.hero-content p {
+    margin-bottom: 0;
+    font-size: clamp(0.8rem, 3vw, 1rem);
+}
+/* На мобильных устройствах высота меньше */
+@media (max-width: 768px) {
+    .hero-slider {
+        height: 40vh !important;
+        min-height: 250px !important;
+    }
+/* 1. Исправляем размер и позиционирование картинки */
+.hero-slide {
+    /* Заставляем картинку заполнять весь слайд без искажений */
+    background-size: cover !important;
+    background-position: center center !important;
+}
+
+/* 2. Заставляем текст встать по центру */
+.hero-slider .swiper-wrapper {
+    /* Самый важный момент! Это нужно, чтобы высота слайда не зависела от текста */
+    height: 100% !important;
+}
+
+
+
+/* Убираем лишние отступы у заголовков и параграфов */
+.hero-content h2,
+.hero-content p {
+    margin: 0 0 0.5rem 0 !important;
+    padding: 0 !important;
+}
+/* Убираем возможные конфликты с flexbox */
+.hero-slide {
+    display: block !important;
+}
+.hero-content h2,
+.hero-content p {
+    margin: 0 0 0.25rem 0 !important;
+}
+/* Чистое центрирование через flexbox */
+.hero-slider .swiper-slide {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    height: auto !important;
+}
+.hero-content {
+    display: block !important;
+    width: 100% !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+    background: transparent !important;
+}
+.hero-content h2,
+.hero-content p {
+    margin: 0 0 0.5rem 0 !important;
+    color: white !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5) !important;
+}
+/* Переопределение стилей слайдера для читаемого текста и центрирования */
+.hero-slider .swiper-slide {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative;
+    z-index: 1;
+}
+.hero-slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2;
+}
+.hero-content {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    color: white;
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+.hero-content h2 {
+    font-size: 2.5rem !important;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 1px 1px 2px black;
+}
+.hero-content p {
+    font-size: 1.2rem !important;
+    margin-bottom: 0;
+    text-shadow: 1px 1px 1px black;
+}
+@media (max-width: 768px) {
+    .hero-content h2 {
+        font-size: 1.6rem !important;
+    }
+    .hero-content p {
+        font-size: 1rem !important;
+    }
+}
+/* Вертикальное центрирование через flex */
+.hero-slide {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+/* Затемнение - но чтобы текст был над ним */
+.hero-slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* чуть светлее */
+    z-index: 1;
+}
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 80%;
+    padding: 20px;
+    text-align: center;
+}
+.hero-content h2 {
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    margin-bottom: 0.75rem;
+}
+.hero-content p {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    margin-bottom: 0;
+}
+/* Убираем предыдущие transform и лишние стили */
+.hero-content {
+    transform: none !important;
+    top: auto !important;
+}
+/* Полное переопределение высоты и центрирования для слайдов Swiper */
+.swiper {
+    overflow: hidden;
+}
+.hero-slider .swiper-wrapper {
+    height: 100% !important;
+}
+.hero-slider .swiper-slide {
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    background-size: cover !important;
+    background-position: center !important;
+    position: relative !important;
+}
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 80%;
+    margin: 0 auto;
+    text-align: center;
+}
+.hero-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+.hero-content p {
+    font-size: 1.2rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+/* Затемнение остается, но текст поверх */
+.hero-slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
