@@ -416,12 +416,6 @@ header {
   color: color-mix(in srgb, #b45309 90%, var(--text));
 }
 
-.badge-status.badge-in-stock {
-  background: color-mix(in srgb, #0ea5e9 14%, var(--surface));
-  border-color: color-mix(in srgb, #0ea5e9 22%, var(--border));
-  color: color-mix(in srgb, #0284c7 90%, var(--text));
-}
-
 .badge-status.badge-sold {
   background: color-mix(in srgb, #ef4444 14%, var(--surface));
   border-color: color-mix(in srgb, #ef4444 22%, var(--border));
@@ -539,12 +533,6 @@ header {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-}
-
-.in-stock {
-  background: color-mix(in srgb, #0ea5e9 14%, var(--surface));
-  color: color-mix(in srgb, #0ea5e9 85%, var(--text));
-  border: 1px solid color-mix(in srgb, #0ea5e9 22%, var(--border));
 }
 
 .sold {

@@ -176,9 +176,9 @@ function parseProductSpecs(string $text, string $lang): array {
                             <?php elseif ($condition === 'used'): ?>
                                 <span class="badge badge-used"><?php echo $lang === 'ru' ? 'Б/У' : '중고'; ?></span>
                             <?php endif; ?>
-                            <span class="badge badge-status <?php echo $prod['status'] == 'available' ? 'badge-in-stock' : 'badge-sold'; ?>">
-                                <?php echo $prod['status'] == 'available' ? t('in_stock') : t('sold_out'); ?>
-                            </span>
+                            <?php if ($prod['status'] !== 'available'): ?>
+                                <span class="badge badge-status badge-sold"><?php echo t('sold_out'); ?></span>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="product-info">
