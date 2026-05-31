@@ -41,9 +41,9 @@ global $PROJECT_CONFIG, $lang, $lang_strings, $pdo;
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <meta name="color-scheme" content="light dark">
     <title><?php echo $PROJECT_CONFIG['site_name'][$lang]; ?> | <?php echo $PROJECT_CONFIG['site_subtitle'][$lang]; ?></title>
-    <link rel="stylesheet" href="style.css?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="style.css?v=2">
     <script src="js/swiper-bundle.min.js" defer></script>
 
 </head>
@@ -53,6 +53,7 @@ global $PROJECT_CONFIG, $lang, $lang_strings, $pdo;
     <div class="container header-inner">
         <div class="logo">
             <h1><?php echo $PROJECT_CONFIG['site_name'][$lang]; ?></h1>
+            <?php echo $PROJECT_CONFIG['site_subtitle'][$lang]; ?>   
         </div>
         <div class="header-controls">
             <div class="lang-switch">
