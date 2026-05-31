@@ -197,6 +197,9 @@ function parseProductSpecs(string $text, string $lang): array {
                                 <?php endforeach; ?>
                             </ul>
                         <?php endif; ?>
+                        <?php if (!empty($specs) && ($short !== '' || $descRest !== '')): ?>
+                            <div class="product-divider" aria-hidden="true"></div>
+                        <?php endif; ?>
                         <?php if ($short !== ''): ?>
                             <p class="product-short"><?php echo htmlspecialchars($short); ?></p>
                         <?php endif; ?>
