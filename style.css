@@ -416,11 +416,6 @@ header {
   color: color-mix(in srgb, #b45309 90%, var(--text));
 }
 
-.badge-status.badge-sold {
-  background: color-mix(in srgb, #ef4444 14%, var(--surface));
-  border-color: color-mix(in srgb, #ef4444 22%, var(--border));
-  color: color-mix(in srgb, #dc2626 90%, var(--text));
-}
 
 .product-card {
   background: var(--surface);
@@ -535,11 +530,6 @@ header {
   letter-spacing: 0.06em;
 }
 
-.sold {
-  background: color-mix(in srgb, #ef4444 14%, var(--surface));
-  color: color-mix(in srgb, #ef4444 85%, var(--text));
-  border: 1px solid color-mix(in srgb, #ef4444 22%, var(--border));
-}
 
 .price {
   margin: 0;

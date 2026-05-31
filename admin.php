@@ -7,9 +7,8 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
     exit;
 }
 
-// Язык
-$available_langs = ['ru', 'ko'];
-$lang = isset($_GET['lang']) && in_array($_GET['lang'], $available_langs) ? $_GET['lang'] : 'ru';
+// Язык (админка всегда на русском)
+$lang = 'ru';
 $_SESSION['lang'] = $lang;
 
 $strings = [
@@ -23,15 +22,10 @@ $strings = [
         'condition' => 'Состояние',
         'condition_new' => 'Новое',
         'condition_used' => 'Б/У',
-        'status' => 'Статус',
-        'status_available' => 'Активен',
-        'status_sold' => 'Продано',
         'short_ru' => 'Краткое описание (Русский)',
         'short_ko' => '간단 설명 (한국어)',
         'area' => 'Площадь помещения',
-        'area_sqm' => 'Площадь (㎡)',
-        'efficiency' => 'Энергоэффективность',
-        'inverter' => 'Инверторная технология',
+        'type' => 'Тип',
         'year' => 'Год (опционально)',
         'required_fields' => 'Заполните обязательные поля',
         'image' => 'Фото',
@@ -56,15 +50,10 @@ $strings = [
         'condition' => '상태',
         'condition_new' => '신제품',
         'condition_used' => '중고',
-        'status' => '상태',
-        'status_available' => '판매중',
-        'status_sold' => '품절',
         'short_ru' => '간단 설명 (러시아어)',
         'short_ko' => '간단 설명 (한국어)',
         'area' => '면적',
-        'area_sqm' => '면적 (㎡)',
-        'efficiency' => '에너지 효율',
-        'inverter' => '인버터',
+        'type' => '유형',
         'year' => '제조 (선택)',
         'required_fields' => '필수 항목을 입력하세요',
         'image' => '이미지',
@@ -84,6 +73,16 @@ $strings = [
 function t($key) {
     global $strings, $lang;
     return $strings[$lang][$key] ?? $key;
+}
+
+function normalizeDigits(string $value): string {
+    return preg_replace('/\D+/u', '', $value) ?? '';
+}
+
+function formatPrice(string $value): string {
+    $digits = normalizeDigits($value);
+    if ($digits === '') return '';
+    return number_format((int)$digits, 0, '.', ',');
 }
 
 function extractPyeong(string $value): ?float {
@@ -149,8 +148,7 @@ function parseDescFields(string $desc, string $lang): array {
         'condition' => '',
         'short' => '',
         'area' => '',
-        'efficiency' => '',
-        'inverter' => '',
+        'type' => '',
         'year' => '',
     ];
 
@@ -178,12 +176,8 @@ function parseDescFields(string $desc, string $lang): array {
             $out['area'] = trim($m[2]);
             continue;
         }
-        if ($out['efficiency'] === '' && preg_match('/^(Энергоэффективность|Энергоэфф\.?|에너지\s*효율)\s*:\s*(.+)$/iu', $line, $m)) {
-            $out['efficiency'] = trim($m[2]);
-            continue;
-        }
-        if ($out['inverter'] === '' && preg_match('/^(Инверторная технология|Инвертор|인버터)\s*:\s*(.+)$/iu', $line, $m)) {
-            $out['inverter'] = trim($m[2]);
+        if ($out['type'] === '' && preg_match('/^(Тип|유형|타입)\s*:\s*(.+)$/iu', $line, $m)) {
+            $out['type'] = trim($m[2]);
             continue;
         }
         if ($out['year'] === '' && preg_match('/^(Год|제조)\s*:\s*(.+)$/iu', $line, $m)) {
@@ -204,6 +198,41 @@ $db_file = __DIR__ . '/ac_shop.db';
 $pdo = new PDO("sqlite:$db_file");
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+function typeOptions(): array {
+    return [
+        'wall' => [
+            'ru' => 'Настенный (벽걸이형)',
+            'ko' => '벽걸이형',
+            'desc_ru' => 'Самый распространенный тип, легко вписывается в интерьер. Подходит для спальни или небольшого офиса.',
+        ],
+        'stand' => [
+            'ru' => 'Напольный (스탠드형)',
+            'ko' => '스탠드형',
+            'desc_ru' => 'Мощные кондиционеры для больших площадей: гостиные, магазины.',
+        ],
+        'duct' => [
+            'ru' => 'Канальный (덕트형)',
+            'ko' => '덕트형',
+            'desc_ru' => 'Скрывается за потолком и распределяет воздух по воздуховодам, не нарушая дизайн.',
+        ],
+        'cassette' => [
+            'ru' => 'Кассетный (카세트형)',
+            'ko' => '카세트형',
+            'desc_ru' => 'Встраивается в подвесной потолок и распределяет воздух по четырем направлениям.',
+        ],
+        'floor_ceiling' => [
+            'ru' => 'Напольно-потолочный (천장형)',
+            'ko' => '천장형',
+            'desc_ru' => 'Устанавливается у пола или под потолком, дает гибкость при монтаже.',
+        ],
+        'column' => [
+            'ru' => 'Колонный (기둥형)',
+            'ko' => '기둥형',
+            'desc_ru' => 'Для больших помещений с высокими потолками.',
+        ],
+    ];
+}
+
 // Обработка добавления/редактирования товара
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['add_product']) || isset($_POST['update_product']))) {
     $isUpdate = isset($_POST['update_product']);
@@ -211,15 +240,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['add_product']) || is
 
     $name_ru = trim((string)($_POST['name_ru'] ?? ''));
     $name_ko = trim((string)($_POST['name_ko'] ?? ''));
-    $price = trim((string)($_POST['price'] ?? ''));
+    $price = normalizeDigits(trim((string)($_POST['price'] ?? '')));
 
     $condition = (string)($_POST['condition'] ?? '');
-    $status = (string)($_POST['status'] ?? 'available');
     $short_ru = trim((string)($_POST['short_ru'] ?? ''));
     $short_ko = trim((string)($_POST['short_ko'] ?? ''));
     $area = trim((string)($_POST['area'] ?? ''));
-    $efficiency = trim((string)($_POST['efficiency'] ?? ''));
-    $inverter = trim((string)($_POST['inverter'] ?? ''));
+    $typeKey = (string)($_POST['type'] ?? '');
     $year = trim((string)($_POST['year'] ?? ''));
 
     $areaResult = areaWithSqm($area);
@@ -247,13 +274,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['add_product']) || is
         $descRuLines[] = 'Площадь помещения: ' . $areaNormalized;
         $descKoLines[] = '면적: ' . $areaNormalized;
     }
-    if ($efficiency !== '') {
-        $descRuLines[] = 'Энергоэффективность: ' . $efficiency;
-        $descKoLines[] = '에너지 효율: ' . $efficiency;
-    }
-    if ($inverter !== '') {
-        $descRuLines[] = 'Инверторная технология: ' . $inverter;
-        $descKoLines[] = '인버터: ' . $inverter;
+    $types = typeOptions();
+    if ($typeKey !== '' && isset($types[$typeKey])) {
+        $descRuLines[] = 'Тип: ' . $types[$typeKey]['ru'];
+        $descKoLines[] = '유형: ' . $types[$typeKey]['ko'];
     }
     if ($year !== '') {
         $descRuLines[] = 'Год: ' . $year;
@@ -310,26 +334,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['add_product']) || is
         }
     }
     
-    if ($name_ru === '' || $name_ko === '' || $price === '' || !in_array($condition, ['new', 'used'], true) || !in_array($status, ['available', 'sold'], true) || $areaNormalized === '' || $efficiency === '' || $inverter === '') {
+    if ($name_ru === '' || $name_ko === '' || $price === '') {
         $error = t('required_fields');
     } else {
         if ($isUpdate) {
             if ($productId <= 0) {
                 $error = "Ошибка редактирования";
             } else {
-                $stmt = $pdo->prepare("UPDATE products SET name_ru = ?, name_ko = ?, price = ?, desc_ru = ?, desc_ko = ?, status = ?, image = COALESCE(?, image) WHERE id = ?");
-                if ($stmt->execute([$name_ru, $name_ko, $price, $desc_ru, $desc_ko, $status, $image_name, $productId])) {
+                $stmt = $pdo->prepare("UPDATE products SET name_ru = ?, name_ko = ?, price = ?, desc_ru = ?, desc_ko = ?, image = COALESCE(?, image) WHERE id = ?");
+                if ($stmt->execute([$name_ru, $name_ko, $price, $desc_ru, $desc_ko, $image_name, $productId])) {
                     $success = "Товар обновлен";
-                    header('Location: admin.php?lang='.$lang);
+                    header('Location: admin.php');
                     exit;
                 } else {
                     $error = "Ошибка редактирования";
                 }
             }
         } else {
-            $stmt = $pdo->prepare("INSERT INTO products (name_ru, name_ko, price, desc_ru, desc_ko, image, status) 
-                                   VALUES (?, ?, ?, ?, ?, ?, ?)");
-            if ($stmt->execute([$name_ru, $name_ko, $price, $desc_ru, $desc_ko, $image_name, $status])) {
+            $stmt = $pdo->prepare("INSERT INTO products (name_ru, name_ko, price, desc_ru, desc_ko, image) 
+                                   VALUES (?, ?, ?, ?, ?, ?)");
+            if ($stmt->execute([$name_ru, $name_ko, $price, $desc_ru, $desc_ko, $image_name])) {
                 $success = "Товар добавлен";
             } else {
                 $error = "Ошибка добавления";
@@ -351,7 +375,7 @@ if (isset($_GET['delete'])) {
     }
     $stmt = $pdo->prepare("DELETE FROM products WHERE id = ?");
     $stmt->execute([$id]);
-    header('Location: admin.php?lang='.$lang);
+    header('Location: admin.php');
     exit;
 }
 
@@ -359,12 +383,10 @@ if (isset($_GET['delete'])) {
 $editProduct = null;
 $editFields = [
     'condition' => 'new',
-    'status' => 'available',
     'short_ru' => '',
     'short_ko' => '',
     'area' => '',
-    'efficiency' => '',
-    'inverter' => '',
+    'type' => '',
     'year' => '',
 ];
 
@@ -382,12 +404,10 @@ if (isset($_GET['edit'])) {
     $koFields = parseDescFields((string)($editProduct['desc_ko'] ?? ''), 'ko');
 
     $editFields['condition'] = $ruFields['condition'] !== '' ? $ruFields['condition'] : ($koFields['condition'] !== '' ? $koFields['condition'] : 'new');
-    $editFields['status'] = (string)($editProduct['status'] ?? 'available');
     $editFields['short_ru'] = (string)($ruFields['short'] ?? '');
     $editFields['short_ko'] = (string)($koFields['short'] ?? '');
     $editFields['area'] = (string)($ruFields['area'] !== '' ? $ruFields['area'] : ($koFields['area'] ?? ''));
-    $editFields['efficiency'] = (string)($ruFields['efficiency'] !== '' ? $ruFields['efficiency'] : ($koFields['efficiency'] ?? ''));
-    $editFields['inverter'] = (string)($ruFields['inverter'] !== '' ? $ruFields['inverter'] : ($koFields['inverter'] ?? ''));
+    $editFields['type'] = (string)($ruFields['type'] !== '' ? $ruFields['type'] : ($koFields['type'] ?? ''));
     $editFields['year'] = (string)($ruFields['year'] !== '' ? $ruFields['year'] : ($koFields['year'] ?? ''));
 }
 
@@ -477,9 +497,7 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
 <body>
 <div class="admin-container">
     <div class="admin-actions">
-        <a class="btn btn-ghost" href="?lang=ru">Рус</a>
-        <a class="btn btn-ghost" href="?lang=ko">한국어</a>
-        <a class="btn btn-ghost" href="index.php?lang=<?php echo $lang; ?>"><?php echo t('home'); ?></a>
+        <a class="btn btn-ghost" href="index.php?lang=ru"><?php echo t('home'); ?></a>
         <a class="btn btn-ghost" href="logout.php"><?php echo t('logout'); ?></a>
     </div>
     
@@ -499,18 +517,12 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
         <input id="name_ko" type="text" name="name_ko" value="<?php echo htmlspecialchars((string)($editProduct['name_ko'] ?? '')); ?>" required>
         
         <label for="price"><?php echo t('price'); ?></label>
-        <input id="price" type="text" name="price" placeholder="예: 350000 또는 협의" value="<?php echo htmlspecialchars((string)($editProduct['price'] ?? '')); ?>" required>
+        <input id="price" type="text" name="price" placeholder="예: 3,500,000" value="<?php echo htmlspecialchars((string)formatPrice((string)($editProduct['price'] ?? ''))); ?>" required>
         
         <label for="condition"><?php echo t('condition'); ?></label>
         <select id="condition" name="condition" required>
             <option value="new" <?php echo ($editProduct && $editFields['condition'] === 'new') ? 'selected' : ''; ?>><?php echo t('condition_new'); ?></option>
             <option value="used" <?php echo ($editProduct && $editFields['condition'] === 'used') ? 'selected' : ''; ?>><?php echo t('condition_used'); ?></option>
-        </select>
-
-        <label for="status"><?php echo t('status'); ?></label>
-        <select id="status" name="status" required>
-            <option value="available" <?php echo ($editProduct && $editFields['status'] === 'available') ? 'selected' : ''; ?>><?php echo t('status_available'); ?></option>
-            <option value="sold" <?php echo ($editProduct && $editFields['status'] === 'sold') ? 'selected' : ''; ?>><?php echo t('status_sold'); ?></option>
         </select>
         
         <label for="short_ru"><?php echo t('short_ru'); ?></label>
@@ -520,14 +532,27 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
         <input id="short_ko" type="text" name="short_ko" placeholder="예: 조용하고 전기요금 절약, 빠른 냉방" value="<?php echo htmlspecialchars((string)($editProduct ? $editFields['short_ko'] : '')); ?>">
 
         <label for="area"><?php echo t('area'); ?></label>
-        <input id="area" type="text" name="area" placeholder="예: 18평 (59㎡)" value="<?php echo htmlspecialchars((string)($editProduct ? $editFields['area'] : '')); ?>" required>
+        <input id="area" type="text" name="area" placeholder="예: 18평 (59㎡)" value="<?php echo htmlspecialchars((string)($editProduct ? $editFields['area'] : '')); ?>">
         <div class="hint" id="areaHint"></div>
 
-        <label for="efficiency"><?php echo t('efficiency'); ?></label>
-        <input id="efficiency" type="text" name="efficiency" placeholder="예: 2등급" value="<?php echo htmlspecialchars((string)($editProduct ? $editFields['efficiency'] : '')); ?>" required>
-
-        <label for="inverter"><?php echo t('inverter'); ?></label>
-        <input id="inverter" type="text" name="inverter" placeholder="예: ✅ (듀얼 인버터)" value="<?php echo htmlspecialchars((string)($editProduct ? $editFields['inverter'] : '')); ?>" required>
+        <label for="type"><?php echo t('type'); ?></label>
+        <select id="type" name="type">
+            <option value=""></option>
+            <?php foreach (typeOptions() as $k => $opt): ?>
+                <?php
+                $selected = '';
+                if ($editProduct && $editFields['type'] !== '') {
+                    if ($editFields['type'] === $opt['ru'] || $editFields['type'] === $opt['ko']) {
+                        $selected = 'selected';
+                    }
+                }
+                ?>
+                <option value="<?php echo htmlspecialchars((string)$k); ?>" <?php echo $selected; ?> data-desc="<?php echo htmlspecialchars((string)$opt['desc_ru']); ?>">
+                    <?php echo htmlspecialchars((string)$opt['ru']); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <div class="hint" id="typeHint"></div>
 
         <label for="year"><?php echo t('year'); ?></label>
         <input id="year" type="number" name="year" inputmode="numeric" min="1990" max="2100" value="<?php echo htmlspecialchars((string)($editProduct ? $editFields['year'] : '')); ?>">
@@ -555,10 +580,10 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
     <?php foreach ($products as $prod): ?>
         <div class="admin-item">
             <span><strong><?php echo htmlspecialchars($prod['name_ru']); ?></strong> / <?php echo htmlspecialchars($prod['name_ko']); ?><br>
-            <?php echo htmlspecialchars($prod['price']); ?> 원</span>
+            <?php echo htmlspecialchars(formatPrice((string)$prod['price'])); ?> 원</span>
             <div class="admin-links">
-                <a class="admin-link" href="?edit=<?php echo $prod['id']; ?>&lang=<?php echo $lang; ?>">✏️ <?php echo t('edit'); ?></a>
-                <a class="admin-link admin-link-delete" href="?delete=<?php echo $prod['id']; ?>&lang=<?php echo $lang; ?>" onclick="return confirm('Удалить?')">🗑️ <?php echo t('delete'); ?></a>
+                <a class="admin-link" href="?edit=<?php echo $prod['id']; ?>">✏️ <?php echo t('edit'); ?></a>
+                <a class="admin-link admin-link-delete" href="?delete=<?php echo $prod['id']; ?>" onclick="return confirm('Удалить?')">🗑️ <?php echo t('delete'); ?></a>
             </div>
         </div>
     <?php endforeach; ?>
@@ -594,6 +619,41 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
 
   areaInput.addEventListener('input', render);
   render();
+})();
+</script>
+<script>
+(() => {
+  const type = document.getElementById('type');
+  const hint = document.getElementById('typeHint');
+  if (!type || !hint) return;
+  const render = () => {
+    const opt = type.options[type.selectedIndex];
+    const text = opt ? (opt.getAttribute('data-desc') || '') : '';
+    hint.textContent = text;
+  };
+  type.addEventListener('change', render);
+  render();
+})();
+</script>
+<script>
+(() => {
+  const price = document.getElementById('price');
+  if (!price) return;
+  const format = (v) => {
+    const digits = (v || '').replace(/\D+/g, '');
+    if (!digits) return '';
+    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+  const onInput = () => {
+    const start = price.selectionStart || 0;
+    const before = price.value;
+    const formatted = format(before);
+    price.value = formatted;
+    const delta = formatted.length - before.length;
+    const next = Math.max(0, start + delta);
+    try { price.setSelectionRange(next, next); } catch (e) {}
+  };
+  price.addEventListener('input', onInput);
 })();
 </script>
 </body>

@@ -6,6 +6,16 @@ $table = $PROJECT_CONFIG['table_name'];
 $stmt = $pdo->query("SELECT * FROM $table ORDER BY created_at DESC");
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+function normalizeDigits(string $value): string {
+    return preg_replace('/\D+/u', '', $value) ?? '';
+}
+
+function formatPrice(string $value): string {
+    $digits = normalizeDigits($value);
+    if ($digits === '') return '';
+    return number_format((int)$digits, 0, '.', ',');
+}
+
 function pyeongToSqm(string $value): ?string {
     if (preg_match('/㎡/u', $value)) {
         return null;
@@ -46,6 +56,7 @@ function parseProductSpecs(string $text, string $lang): array {
     $rest = [];
     $condition = null;
     $short = null;
+    $type = null;
 
     foreach ($lines as $line) {
         $line = trim($line);
@@ -97,20 +108,12 @@ function parseProductSpecs(string $text, string $lang): array {
             continue;
         }
 
-        if (preg_match('/^(Энергоэффективность|Энергоэфф\\.?|에너지\\s*효율)\\s*:\\s*(.+)$/iu', $line, $m)) {
+        if ($type === null && preg_match('/^(Тип|유형|타입)\\s*:\\s*(.+)$/iu', $line, $m)) {
+            $type = trim($m[2]);
             $specs[] = [
-                'key' => 'efficiency',
-                'label' => $lang === 'ru' ? 'Энергоэффективность' : '에너지 효율',
-                'value' => trim($m[2]),
-            ];
-            continue;
-        }
-
-        if (preg_match('/^(Инверторная технология|Инвертор|인버터)\\s*:\\s*(.+)$/iu', $line, $m)) {
-            $specs[] = [
-                'key' => 'inverter',
-                'label' => $lang === 'ru' ? 'Инвертор' : '인버터',
-                'value' => trim($m[2]),
+                'key' => 'type',
+                'label' => $lang === 'ru' ? 'Тип' : '유형',
+                'value' => $type,
             ];
             continue;
         }
@@ -150,6 +153,7 @@ function parseProductSpecs(string $text, string $lang): array {
                 $short = (string)($parsed['short'] ?? '');
                 $descRest = (string)($parsed['rest'] ?? '');
                 $condition = $parsed['condition'] ?? null;
+                $priceFormatted = formatPrice((string)($prod['price'] ?? ''));
                 ?>
                 <article class="product-card">
                     <div class="product-media">
@@ -176,19 +180,13 @@ function parseProductSpecs(string $text, string $lang): array {
                             <?php elseif ($condition === 'used'): ?>
                                 <span class="badge badge-used"><?php echo $lang === 'ru' ? 'Б/У' : '중고'; ?></span>
                             <?php endif; ?>
-                            <?php if ($prod['status'] !== 'available'): ?>
-                                <span class="badge badge-status badge-sold"><?php echo t('sold_out'); ?></span>
-                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="product-info">
                         <h3 class="product-title"><?php echo htmlspecialchars($prod["name_$lang"]); ?></h3>
                         <div class="product-meta">
-                            <p class="price"><span class="price-label"><?php echo t('price_label'); ?>:</span> <?php echo htmlspecialchars($prod['price']); ?> 원</p>
+                            <p class="price"><span class="price-label"><?php echo t('price_label'); ?>:</span> <?php echo htmlspecialchars($priceFormatted !== '' ? $priceFormatted : (string)$prod['price']); ?> 원</p>
                         </div>
-                        <?php if ($short !== ''): ?>
-                            <p class="product-short"><?php echo htmlspecialchars($short); ?></p>
-                        <?php endif; ?>
                         <?php if (!empty($specs)): ?>
                             <ul class="product-specs">
                                 <?php foreach ($specs as $spec): ?>
@@ -198,6 +196,9 @@ function parseProductSpecs(string $text, string $lang): array {
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
+                        <?php endif; ?>
+                        <?php if ($short !== ''): ?>
+                            <p class="product-short"><?php echo htmlspecialchars($short); ?></p>
                         <?php endif; ?>
                         <?php if ($descRest !== ''): ?>
                             <p class="desc"><?php echo nl2br(htmlspecialchars($descRest)); ?></p>
