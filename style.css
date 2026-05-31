@@ -126,7 +126,8 @@ header {
 }
 
 .logo h1 {
-  font-size: 1.2rem;
+  margin-top: 42px;
+  font-size: 1.9rem;
   background: linear-gradient(135deg, var(--text), color-mix(in srgb, var(--accent) 30%, var(--text)));
   -webkit-background-clip: text;
   background-clip: text;
@@ -277,13 +278,21 @@ header {
   background: var(--surface-2);
 }
 
+.hero-slider .swiper-wrapper {
+  height: 100%;
+}
+
+.hero-slider .swiper-slide {
+  height: 100%;
+}
+
 .hero-slide {
   background-size: cover;
   background-position: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   position: relative;
+  height: 100%;
 }
 
 .hero-slide::before {
@@ -302,7 +311,7 @@ header {
   border-radius: var(--radius);
   background: color-mix(in srgb, rgba(2, 6, 23, 0.65) 88%, transparent);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(1px);
   text-align: center;
 }
 
