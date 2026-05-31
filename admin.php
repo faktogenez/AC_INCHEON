@@ -507,6 +507,18 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
         .admin-item .admin-link-delete { color: color-mix(in srgb, #ef4444 85%, var(--text)); }
         .error { color: color-mix(in srgb, #ef4444 85%, var(--text)); background: color-mix(in srgb, #ef4444 12%, var(--surface)); border: 1px solid color-mix(in srgb, #ef4444 18%, var(--border)); padding: 10px; border-radius: 12px; margin: 10px 0; }
         .success { color: color-mix(in srgb, #22c55e 85%, var(--text)); background: color-mix(in srgb, #22c55e 10%, var(--surface)); border: 1px solid color-mix(in srgb, #22c55e 18%, var(--border)); padding: 10px; border-radius: 12px; margin: 10px 0; }
+        .admin-item-main { min-width: 0; }
+        .admin-item-title { display: block; font-weight: 850; }
+
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            .admin-container { padding: 16px; }
+            .admin-actions { justify-content: space-between; }
+            .admin-actions .btn { padding: 10px 12px; }
+            .admin-item { flex-direction: column; align-items: stretch; gap: 10px; }
+            .admin-item .admin-links { justify-content: flex-end; }
+            h1 { font-size: 1.2rem; }
+        }
     </style>
 </head>
 <body>
@@ -596,8 +608,23 @@ $products = $pdo->query("SELECT * FROM products ORDER BY created_at DESC")->fetc
     <h2><?php echo t('existing'); ?></h2>
     <?php foreach ($products as $prod): ?>
         <div class="admin-item">
-            <span><strong><?php echo htmlspecialchars($prod['name_ru']); ?></strong> / <?php echo htmlspecialchars($prod['name_ko']); ?><br>
-            <?php echo htmlspecialchars(formatPrice((string)$prod['price'])); ?> 원</span>
+            <?php
+            $nameRu = (string)($prod['name_ru'] ?? '');
+            $nameRuShort = $nameRu;
+            if (function_exists('mb_strlen') && function_exists('mb_substr')) {
+                if (mb_strlen($nameRuShort, 'UTF-8') > 20) {
+                    $nameRuShort = mb_substr($nameRuShort, 0, 20, 'UTF-8') . '…';
+                }
+            } else {
+                if (strlen($nameRuShort) > 20) {
+                    $nameRuShort = substr($nameRuShort, 0, 20) . '...';
+                }
+            }
+            ?>
+            <div class="admin-item-main">
+                <span class="admin-item-title" title="<?php echo htmlspecialchars($nameRu); ?>"><?php echo htmlspecialchars($nameRuShort); ?></span>
+                <span><?php echo htmlspecialchars(formatPrice((string)$prod['price'])); ?> 원</span>
+            </div>
             <div class="admin-links">
                 <a class="admin-link" href="?edit=<?php echo $prod['id']; ?>" aria-label="Редактировать" title="Редактировать">✏️</a>
                 <a class="admin-link admin-link-delete" href="?delete=<?php echo $prod['id']; ?>" onclick="return confirm('Удалить?')" aria-label="Удалить" title="Удалить">🗑️</a>
