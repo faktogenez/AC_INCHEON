@@ -124,15 +124,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     
     $image_name = null;
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mime = finfo_file($finfo, $_FILES['image']['tmp_name']);
-        finfo_close($finfo);
+        $mime = null;
+        if (function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            if ($finfo !== false) {
+                $mime = finfo_file($finfo, $_FILES['image']['tmp_name']) ?: null;
+                finfo_close($finfo);
+            }
+        } elseif (function_exists('mime_content_type')) {
+            $mime = mime_content_type($_FILES['image']['tmp_name']) ?: null;
+        } else {
+            $imgInfo = @getimagesize($_FILES['image']['tmp_name']);
+            if (is_array($imgInfo) && isset($imgInfo['mime'])) {
+                $mime = $imgInfo['mime'];
+            }
+        }
+
         $allowed = ['image/jpeg', 'image/png', 'image/webp'];
-        if (in_array($mime, $allowed) && $_FILES['image']['size'] < 5*1024*1024) {
+        if ($mime !== null && in_array($mime, $allowed, true) && $_FILES['image']['size'] < 5*1024*1024) {
+            if (!is_dir('uploads')) {
+                mkdir('uploads', 0775, true);
+            }
+            if (!is_dir('thumbnails')) {
+                mkdir('thumbnails', 0775, true);
+            }
+
             $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
             $image_name = uniqid() . '.' . $ext;
             move_uploaded_file($_FILES['image']['tmp_name'], 'uploads/' . $image_name);
-            // Создаём миниатюру
             makeThumbnail('uploads/' . $image_name, 'thumbnails/' . $image_name, 300);
         } else {
             $error = "Неверный формат или размер >5MB";
@@ -171,24 +190,51 @@ if (isset($_GET['delete'])) {
 
 // Функция создания миниатюры
 function makeThumbnail($src, $dst, $width) {
+    if (!function_exists('imagecreatetruecolor') || !function_exists('imagecopyresampled')) {
+        return false;
+    }
+
     $info = getimagesize($src);
     if (!$info) return false;
     $type = $info[2];
     switch ($type) {
-        case IMAGETYPE_JPEG: $source = imagecreatefromjpeg($src); break;
-        case IMAGETYPE_PNG: $source = imagecreatefrompng($src); break;
-        case IMAGETYPE_WEBP: $source = imagecreatefromwebp($src); break;
+        case IMAGETYPE_JPEG:
+            if (!function_exists('imagecreatefromjpeg')) return false;
+            $source = imagecreatefromjpeg($src);
+            break;
+        case IMAGETYPE_PNG:
+            if (!function_exists('imagecreatefrompng')) return false;
+            $source = imagecreatefrompng($src);
+            break;
+        case IMAGETYPE_WEBP:
+            if (!function_exists('imagecreatefromwebp')) return false;
+            $source = imagecreatefromwebp($src);
+            break;
         default: return false;
     }
+    if (!$source) return false;
     $orig_w = imagesx($source);
     $orig_h = imagesy($source);
+    if ($orig_w <= 0 || $orig_h <= 0) {
+        imagedestroy($source);
+        return false;
+    }
     $height = intval($orig_h * $width / $orig_w);
     $thumb = imagecreatetruecolor($width, $height);
     imagecopyresampled($thumb, $source, 0, 0, 0, 0, $width, $height, $orig_w, $orig_h);
     switch ($type) {
-        case IMAGETYPE_JPEG: imagejpeg($thumb, $dst, 85); break;
-        case IMAGETYPE_PNG: imagepng($thumb, $dst, 8); break;
-        case IMAGETYPE_WEBP: imagewebp($thumb, $dst, 85); break;
+        case IMAGETYPE_JPEG:
+            if (!function_exists('imagejpeg')) break;
+            imagejpeg($thumb, $dst, 85);
+            break;
+        case IMAGETYPE_PNG:
+            if (!function_exists('imagepng')) break;
+            imagepng($thumb, $dst, 8);
+            break;
+        case IMAGETYPE_WEBP:
+            if (!function_exists('imagewebp')) break;
+            imagewebp($thumb, $dst, 85);
+            break;
     }
     imagedestroy($source);
     imagedestroy($thumb);
