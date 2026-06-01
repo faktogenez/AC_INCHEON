@@ -42,9 +42,16 @@ global $PROJECT_CONFIG, $lang, $lang_strings, $pdo;
     <meta name="color-scheme" content="light dark">
     <title><?php echo $PROJECT_CONFIG['site_name'][$lang]; ?> | <?php echo $PROJECT_CONFIG['site_subtitle'][$lang]; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/swiper-bundle.min.css">
-    <link rel="stylesheet" href="style.css?v=2">
-    <script src="js/swiper-bundle.min.js" defer></script>
+    <?php
+    $assetVersion = function (string $path): string {
+        $full = __DIR__ . '/' . ltrim($path, '/');
+        $mtime = @filemtime($full);
+        return $mtime ? (string)$mtime : (string)time();
+    };
+    ?>
+    <link rel="stylesheet" href="css/swiper-bundle.min.css?v=<?php echo htmlspecialchars($assetVersion('css/swiper-bundle.min.css')); ?>">
+    <link rel="stylesheet" href="style.css?v=<?php echo htmlspecialchars($assetVersion('style.css')); ?>">
+    <script src="js/swiper-bundle.min.js?v=<?php echo htmlspecialchars($assetVersion('js/swiper-bundle.min.js')); ?>" defer></script>
 
 </head>
 <body>
@@ -100,6 +107,6 @@ global $PROJECT_CONFIG, $lang, $lang_strings, $pdo;
         <p>© <?php echo date('Y'); ?> <?php echo $PROJECT_CONFIG['site_name'][$lang]; ?> | <?php echo $PROJECT_CONFIG['address']; ?></p>
     </div>
 </footer>
-<script src="js/init-slider.js" defer></script>
+<script src="js/init-slider.js?v=<?php echo htmlspecialchars($assetVersion('js/init-slider.js')); ?>" defer></script>
 </body>
 </html>
