@@ -35,6 +35,12 @@ jobs:
             --exclude='php.ini' \
             -e "ssh -i ~/.ssh/id_ed25519" ./ "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/var/www/ac-incheon/"
 
+      - name: Upload images (uploads/)
+        run: |
+          ssh -i ~/.ssh/id_ed25519 "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}" "mkdir -p /var/www/ac-incheon/uploads /var/www/ac-incheon/thumbnails"
+          rsync -az --ignore-existing \
+            -e "ssh -i ~/.ssh/id_ed25519" uploads/ "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/var/www/ac-incheon/uploads/"
+
       - name: Reload PHP-FPM
         continue-on-error: true
         run: |
