@@ -24,6 +24,10 @@ jobs:
       - name: Trust server host
         run: ssh-keyscan -H "${{ secrets.SERVER_IP }}" >> ~/.ssh/known_hosts
 
+      - name: Create deploy marker
+        run: |
+          printf "sha=%s\nref=%s\nrun_id=%s\nutc=%s\n" "${GITHUB_SHA}" "${GITHUB_REF}" "${GITHUB_RUN_ID}" "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > deploy_marker.txt
+
       - name: Deploy via rsync
         run: |
           rsync -az --delete \
@@ -36,7 +40,7 @@ jobs:
       - name: Verify deployed files (hashes)
         continue-on-error: true
         run: |
-          ssh -i ~/.ssh/id_ed25519 "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}" "cd /var/www/ac-incheon && (sha256sum index.php style.css 2>/dev/null || true) && (ls -la uploads 2>/dev/null | head -n 20 || true) && (ls -la ac_shop.db 2>/dev/null || true)"
+          ssh -i ~/.ssh/id_ed25519 "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}" "cd /var/www/ac-incheon && (cat deploy_marker.txt 2>/dev/null || true) && (sha256sum index.php style.css 2>/dev/null || true) && (ls -la uploads 2>/dev/null | head -n 20 || true) && (ls -la ac_shop.db 2>/dev/null || true)"
 
       - name: Reload PHP-FPM
         continue-on-error: true
