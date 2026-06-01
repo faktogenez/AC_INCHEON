@@ -687,6 +687,10 @@ footer {
   .container {
     padding: 0 16px;
   }
+  header {
+    position: static;
+    top: auto;
+  }
   .header-inner {
     flex-direction: column;
     text-align: center;
