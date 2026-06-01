@@ -30,17 +30,27 @@ jobs:
 
       - name: Deploy via rsync
         run: |
+          TARGET_DIR="${{ secrets.SERVER_PATH }}"
+          if [ -z "$TARGET_DIR" ]; then
+            TARGET_DIR="/var/www/ac-incheon"
+          fi
+
           rsync -az --delete \
             --exclude='.git/' \
             --exclude='.github/' \
             --exclude='thumbnails/' \
             --exclude='php.ini' \
-            -e "ssh -i ~/.ssh/id_ed25519" ./ "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/var/www/ac-incheon/"
+            -e "ssh -i ~/.ssh/id_ed25519" ./ "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:${TARGET_DIR}/"
 
       - name: Verify deployed files (hashes)
         continue-on-error: true
         run: |
-          ssh -i ~/.ssh/id_ed25519 "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}" "cd /var/www/ac-incheon && (cat deploy_marker.txt 2>/dev/null || true) && (sha256sum index.php style.css 2>/dev/null || true) && (ls -la uploads 2>/dev/null | head -n 20 || true) && (ls -la ac_shop.db 2>/dev/null || true)"
+          TARGET_DIR="${{ secrets.SERVER_PATH }}"
+          if [ -z "$TARGET_DIR" ]; then
+            TARGET_DIR="/var/www/ac-incheon"
+          fi
+
+          ssh -i ~/.ssh/id_ed25519 "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}" "echo '--- nginx root (if readable) ---'; (grep -R \"root \" -n /etc/nginx/sites-enabled 2>/dev/null | head -n 50 || true); echo '--- target dir ---'; echo \"${TARGET_DIR}\"; cd \"${TARGET_DIR}\" 2>/dev/null && (cat deploy_marker.txt 2>/dev/null || true) && (sha256sum index.php style.css 2>/dev/null || true) && (ls -la uploads 2>/dev/null | head -n 20 || true) && (ls -la ac_shop.db 2>/dev/null || true)"
 
       - name: Reload PHP-FPM
         continue-on-error: true
